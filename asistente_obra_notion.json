@@ -1,0 +1,53 @@
+{
+  "name": "Asistente de Obra - Notion",
+  "description": "Asistente que consulta, actualiza y crea tareas y solicitudes de pago en Notion para arquitectura y construcción.",
+  "instructions": "Actúa como un gestor conectado a mis bases de datos de Notion. Puedes consultar, crear o actualizar tareas y solicitudes relacionadas con obras, contratistas, prioridades y fechas. Usa la API de Notion para realizar las acciones.",
+  "actions": [
+    {
+      "name": "Consultar tareas por estado",
+      "description": "Devuelve una lista de tareas con un estado específico (por ejemplo: Pendiente, En proceso, Completada)",
+      "parameters": {
+        "estado": "Estado de la tarea a consultar (string)"
+      },
+      "method": "POST",
+      "url": "https://api.notion.com/v1/databases/1f863cd61526801aa60ffd847a78e97b/query",
+      "headers": {
+        "Authorization": "Bearer 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",
+        "Content-Type": "application/json",
+        "Notion-Version": "2022-06-28"
+      },
+      "body": {
+        "filter": {
+          "property": "Estado",
+          "select": {
+            "equals": "{{estado}}"
+          }
+        },
+        "page_size": 10
+      }
+    },
+    {
+      "name": "Filtrar tareas por persona asignada",
+      "description": "Devuelve tareas asignadas a una persona específica en la propiedad Personas.",
+      "parameters": {
+        "persona_nombre": "Nombre de la persona asignada"
+      },
+      "method": "POST",
+      "url": "https://api.notion.com/v1/databases/1f863cd61526801aa60ffd847a78e97b/query",
+      "headers": {
+        "Authorization": "Bearer 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",
+        "Content-Type": "application/json",
+        "Notion-Version": "2022-06-28"
+      },
+      "body": {
+        "filter": {
+          "property": "Personas",
+          "people": {
+            "contains": "{{persona_nombre}}"
+          }
+        },
+        "page_size": 20
+      }
+    }
+  ]
+}

@@ -1,22 +1,24 @@
 {
   "schema_version": "v1",
-  "name_for_human": "Agente Notion",
-  "name_for_model": "agente_notion",
-  "description_for_human": "Asistente para integrar ChatGPT con Notion",
-  "description_for_model": "Ayuda a consultar y actualizar tareas en bases de datos de Notion relacionadas con obras, contratistas y pagos.",
+  "name_for_human": "Asistente Notion Obra",
+  "name_for_model": "asistente_notion",
+  "description_for_human": "Consulta o edita tus bases de datos de Notion de obra, como Tareas, Clientes, Obras, etc.",
+  "description_for_model": "Plugin para interactuar con múltiples bases de datos de Notion: listar registros, obtener campos, añadir, actualizar y filtrar entradas.",
   "auth": {
     "type": "none"
   },
   "api": {
     "type": "openapi",
-    "url": "https://notion-gpt-agent.onrender.com/openapi.json"
+    "url": "https://notion-gpt-agent.onrender.com/openapi.json",
+    "is_user_authenticated": false
   },
   "servers": [
     {
-      "url": "https://notion-gpt-agent.onrender.com"
+      "url": "https://notion-gpt-agent.onrender.com",
+      "description": "Endpoint del backend en Render"
     }
   ],
-  "logo_url": "https://chat.openai.com/logo.png",
-  "contact_email": "tu@email.com",
-  "legal_info_url": "https://tuweb.com/legal"
+  "logo_url": "https://raw.githubusercontent.com/pepehr03/notion-gpt-agent/main/logo.png",
+  "contact_email": "tu-correo@example.com",
+  "legal_info_url": "https://tu-sitio.com/terminos"
 }

@@ -18,6 +18,11 @@
       "description": "Endpoint del backend en Render"
     }
   ],
+  "info": {
+    "title": "Agente Notion",
+    "version": "1.0.0",
+    "description": "API para conectar ChatGPT con Notion para gestionar tareas, obras y contratistas."
+  },
   "logo_url": "https://raw.githubusercontent.com/pepehr03/notion-gpt-agent/main/logo.png",
   "contact_email": "tu-correo@example.com",
   "legal_info_url": "https://tu-sitio.com/terminos"

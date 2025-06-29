@@ -1,19 +1,21 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Asistente Notion",
+    "title": "Notion GPT Agent API",
     "version": "1.0.0",
-    "description": "Permite consultar y modificar bases de datos de Notion desde un agente GPT"
+    "description": "API para listar registros y campos de bases de datos Notion."
   },
   "servers": [
     {
-      "url": "https://notion-gpt-agent.onrender.com"
+      "url": "https://notion-gpt-agent.onrender.com",
+      "description": "Backend desplegado en Render"
     }
   ],
   "paths": {
     "/listar": {
       "get": {
-        "summary": "Listar registros",
+        "operationId": "listarRegistros",
+        "summary": "Listar registros de una base de datos Notion",
         "parameters": [
           {
             "name": "database_id",
@@ -22,34 +24,53 @@
             "schema": {
               "type": "string"
             },
-            "description": "ID de la base de datos de Notion"
+            "description": "ID de la base de datos a consultar"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 100,
+              "minimum": 1,
+              "maximum": 100
+            },
+            "description": "Número máximo de registros a devolver"
           }
         ],
         "responses": {
           "200": {
-            "description": "Lista de registros de la base de datos",
+            "description": "Lista de registros",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "registros": {
-                      "type": "array",
-                      "items": {
-                        "type": "object"
-                      }
-                    }
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string" },
+                      "properties": { "type": "object" }
+                    },
+                    "required": ["id", "properties"]
                   }
                 }
               }
             }
+          },
+          "400": {
+            "description": "Parámetro faltante o inválido"
+          },
+          "500": {
+            "description": "Error interno del servidor"
           }
         }
       }
     },
     "/campos": {
       "get": {
-        "summary": "Obtener campos de una base de datos",
+        "operationId": "obtenerCampos",
+        "summary": "Obtener esquemas de propiedades de una base de datos Notion",
         "parameters": [
           {
             "name": "database_id",
@@ -58,28 +79,41 @@
             "schema": {
               "type": "string"
             },
-            "description": "ID de la base de datos de Notion"
+            "description": "ID de la base de datos a consultar"
           }
         ],
         "responses": {
           "200": {
-            "description": "Lista de campos de la base de datos",
+            "description": "Esquema de propiedades de la base de datos",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "campos": {
+                    "id": { "type": "string" },
+                    "title": {
                       "type": "array",
-                      "items": {
-                        "type": "string"
+                      "items": { "type": "string" }
+                    },
+                    "properties": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "type": { "type": "string" },
+                          "name": { "type": "string" }
+                        },
+                        "required": ["type", "name"]
                       }
                     }
-                  }
+                  },
+                  "required": ["id", "title", "properties"]
                 }
               }
             }
-          }
+          },
+          "400": { "description": "Parámetro faltante o inválido" },
+          "500": { "description": "Error interno del servidor" }
         }
       }
     }

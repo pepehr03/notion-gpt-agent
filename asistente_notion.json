@@ -11,6 +11,11 @@
     "type": "openapi",
     "url": "https://notion-gpt-agent.onrender.com/openapi.json"
   },
+  "servers": [
+    {
+      "url": "https://notion-gpt-agent.onrender.com"
+    }
+  ],
   "logo_url": "https://chat.openai.com/logo.png",
   "contact_email": "tu@email.com",
   "legal_info_url": "https://tuweb.com/legal"

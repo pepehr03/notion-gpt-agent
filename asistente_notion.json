@@ -1,9 +1,9 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.1.0",
   "info": {
-    "title": "Asistente Notion Obra",
-    "description": "Permite a un agente GPT consultar y crear entradas en bases de datos de Notion relacionadas con arquitectura y construcción.",
-    "version": "1.0.0"
+    "title": "Asistente Notion",
+    "version": "1.0.0",
+    "description": "Permite consultar y modificar bases de datos de Notion desde un agente GPT"
   },
   "servers": [
     {
@@ -13,8 +13,7 @@
   "paths": {
     "/listar": {
       "get": {
-        "summary": "Listar registros de una base de datos",
-        "operationId": "listarRegistros",
+        "summary": "Listar registros",
         "parameters": [
           {
             "name": "database_id",
@@ -28,11 +27,19 @@
         ],
         "responses": {
           "200": {
-            "description": "Listado de registros",
+            "description": "Lista de registros de la base de datos",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "type": "object",
+                  "properties": {
+                    "registros": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -40,32 +47,38 @@
         }
       }
     },
-    "/crear": {
-      "post": {
-        "summary": "Crear una nueva entrada en la base de datos",
-        "operationId": "crearRegistro",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "database_id": {
-                    "type": "string"
-                  },
-                  "propiedades": {
-                    "type": "object"
-                  }
-                },
-                "required": ["database_id", "propiedades"]
-              }
-            }
+    "/campos": {
+      "get": {
+        "summary": "Obtener campos de una base de datos",
+        "parameters": [
+          {
+            "name": "database_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID de la base de datos de Notion"
           }
-        },
+        ],
         "responses": {
           "200": {
-            "description": "Registro creado correctamente"
+            "description": "Lista de campos de la base de datos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "campos": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }

@@ -21,6 +21,18 @@
     "version": "1.0.0",
     "description": "API para conectar ChatGPT con Notion para gestionar tareas, obras y contratistas."
   },
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Verifica que la API esté funcionando",
+        "responses": {
+          "200": {
+            "description": "API funcionando correctamente"
+          }
+        }
+      }
+    }
+  },
   "logo_url": "https://chat.openai.com/logo.png",
   "contact_email": "tu@email.com",
   "legal_info_url": "https://tuweb.com/legal"

@@ -24,6 +24,7 @@
   "paths": {
     "/": {
       "get": {
+        "operationId": "verificarEstadoAPI",
         "summary": "Verifica que la API esté funcionando",
         "responses": {
           "200": {

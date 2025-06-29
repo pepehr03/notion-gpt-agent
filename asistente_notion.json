@@ -1,29 +1,74 @@
 {
-  "schema_version": "v1",
-  "name_for_human": "Asistente Notion Obra",
-  "name_for_model": "asistente_notion",
-  "description_for_human": "Consulta o edita tus bases de datos de Notion de obra, como Tareas, Clientes, Obras, etc.",
-  "description_for_model": "Plugin para interactuar con múltiples bases de datos de Notion: listar registros, obtener campos, añadir, actualizar y filtrar entradas.",
-  "auth": {
-    "type": "none"
-  },
-  "api": {
-    "type": "openapi",
-    "url": "https://notion-gpt-agent.onrender.com/openapi.json",
-    "is_user_authenticated": false
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Asistente Notion Obra",
+    "description": "Permite a un agente GPT consultar y crear entradas en bases de datos de Notion relacionadas con arquitectura y construcción.",
+    "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "https://notion-gpt-agent.onrender.com",
-      "description": "Endpoint del backend en Render"
+      "url": "https://notion-gpt-agent.onrender.com"
     }
   ],
-  "info": {
-    "title": "Agente Notion",
-    "version": "1.0.0",
-    "description": "API para conectar ChatGPT con Notion para gestionar tareas, obras y contratistas."
-  },
-  "logo_url": "https://raw.githubusercontent.com/pepehr03/notion-gpt-agent/main/logo.png",
-  "contact_email": "tu-correo@example.com",
-  "legal_info_url": "https://tu-sitio.com/terminos"
+  "paths": {
+    "/listar": {
+      "get": {
+        "summary": "Listar registros de una base de datos",
+        "operationId": "listarRegistros",
+        "parameters": [
+          {
+            "name": "database_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID de la base de datos de Notion"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Listado de registros",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/crear": {
+      "post": {
+        "summary": "Crear una nueva entrada en la base de datos",
+        "operationId": "crearRegistro",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "database_id": {
+                    "type": "string"
+                  },
+                  "propiedades": {
+                    "type": "object"
+                  }
+                },
+                "required": ["database_id", "propiedades"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Registro creado correctamente"
+          }
+        }
+      }
+    }
+  }
 }

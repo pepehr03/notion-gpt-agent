@@ -16,6 +16,11 @@
       "url": "https://notion-gpt-agent.onrender.com"
     }
   ],
+  "info": {
+    "title": "Agente Notion",
+    "version": "1.0.0",
+    "description": "API para conectar ChatGPT con Notion para gestionar tareas, obras y contratistas."
+  },
   "logo_url": "https://chat.openai.com/logo.png",
   "contact_email": "tu@email.com",
   "legal_info_url": "https://tuweb.com/legal"

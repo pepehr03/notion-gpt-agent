@@ -1,78 +1,70 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import Dict, Any
 import os
 from notion_client import Client
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# Cargar variables de entorno
 NOTION_SECRET = os.getenv("NOTION_SECRET")
-
-# IDs de bases de datos desde Render
-DBS = {
-    "tareas": os.getenv("DB_TAREAS"),
-    "contratistas": os.getenv("DB_CONTRATISTAS"),
-    "clientes": os.getenv("DB_CLIENTES"),
-    "llamadas": os.getenv("DB_LLAMADAS"),
-    "juntas": os.getenv("DB_JUNTAS"),
-    "obras": os.getenv("DB_OBRAS"),
-    "equipo": os.getenv("DB_EQUIPO"),
-    "solicitudes_pago": os.getenv("DB_SOLICITUDES_PAGO")
-}
-
 notion = Client(auth=NOTION_SECRET)
-app = FastAPI()
 
-class RegistroNuevo(BaseModel):
-    propiedades: Dict[str, Any]
-
-@app.get("/")
-def raiz():
-    return {"mensaje": "API funcionando correctamente"}
-
-@app.get("/listar/{bd}")
-def listar_registros(bd: str):
-    if bd not in DBS or not DBS[bd]:
-        raise HTTPException(status_code=404, detail="Base de datos no encontrada")
+def obtener_campos_base_datos(database_id):
     try:
-        respuesta = notion.databases.query(DBS[bd], page_size=100)
-        return respuesta["results"]
+        response = notion.databases.retrieve(database_id)
+        propiedades = response["properties"]
+        campos = {nombre: propiedades[nombre]["type"] for nombre in propiedades}
+        return campos
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print("Error al obtener campos:", e)
+        return None
 
-@app.get("/campos/{bd}")
-def obtener_campos(bd: str):
-    if bd not in DBS or not DBS[bd]:
-        raise HTTPException(status_code=404, detail="Base de datos no encontrada")
+def listar_registros(database_id):
     try:
-        bd_info = notion.databases.retrieve(DBS[bd])
-        props = bd_info["properties"]
-        return {k: props[k]["type"] for k in props}
+        respuesta = notion.databases.query(database_id, page_size=100)
+        registros = respuesta["results"]
+        for i, registro in enumerate(registros, 1):
+            print(f"\n======= Registro {i} =======")
+            for propiedad, valor in registro["properties"].items():
+                tipo = valor["type"]
+                try:
+                    if tipo == "title":
+                        texto = valor["title"][0]["plain_text"] if valor["title"] else ""
+                    elif tipo == "rich_text":
+                        texto = valor["rich_text"][0]["plain_text"] if valor["rich_text"] else ""
+                    elif tipo == "date":
+                        texto = valor["date"]["start"] if valor["date"] else ""
+                    elif tipo == "select":
+                        texto = valor["select"]["name"] if valor["select"] else ""
+                    elif tipo == "multi_select":
+                        texto = ", ".join([v["name"] for v in valor["multi_select"]])
+                    elif tipo == "people":
+                        texto = ", ".join([p.get("name", "") for p in valor["people"]])
+                    elif tipo == "relation":
+                        texto = ", ".join([r["id"] for r in valor["relation"]])
+                    elif tipo == "checkbox":
+                        texto = "✅" if valor["checkbox"] else "❌"
+                    elif tipo == "email":
+                        texto = valor["email"]
+                    elif tipo == "phone_number":
+                        texto = valor["phone_number"]
+                    else:
+                        texto = str(valor.get(tipo, ""))
+                except Exception:
+                    texto = "(error al leer valor)"
+                print(f"{propiedad}: {texto}")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print("Error al listar registros:", e)
 
-@app.post("/crear/{bd}")
-def crear_registro(bd: str, entrada: RegistroNuevo):
-    if bd not in DBS or not DBS[bd]:
-        raise HTTPException(status_code=404, detail="Base de datos no encontrada")
-    try:
-        nuevo = notion.pages.create(
-            parent={"database_id": DBS[bd]},
-            properties=entrada.propiedades
-        )
-        return nuevo
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+if __name__ == "__main__":
+    db_id = input("Ingresa el ID de la base de datos de Notion: ")
+    accion = input("¿Qué deseas hacer? (listar/campos): ").strip().lower()
 
-@app.patch("/actualizar/{page_id}")
-def actualizar_registro(page_id: str, entrada: RegistroNuevo):
-    try:
-        actualizado = notion.pages.update(
-            page_id=page_id,
-            properties=entrada.propiedades
-        )
-        return actualizado
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    if accion == "listar":
+        listar_registros(db_id)
+    elif accion == "campos":
+        campos = obtener_campos_base_datos(db_id)
+        if campos:
+            print("\nCampos de la base de datos:")
+            for nombre, tipo in campos.items():
+                print(f"- {nombre}: {tipo}")
+    else:
+        print("Acción no reconocida.")
